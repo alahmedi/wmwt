@@ -1,12 +1,13 @@
 import os
 import platform
 from colorama import init, Fore, Style
+import distro
 
 init(autoreset=True)
 
 user = os.environ.get("USER")
 home = os.environ.get("HOME")
-term = os.environ.get("TERM")
+term = os.environ.get("TERM_PROGRAM")
 shell = os.environ.get("SHELL")
 os = platform.system()
 kernver = platform.release()
@@ -42,16 +43,27 @@ if os == "Darwin":
 	parts = macver.split(".")
 	lookup_key = parts[0] if parts[0] != "10" else f"{parts[0]}.{parts[1]}"
 	os = macOSversions.get(lookup_key, "Unknown Mac system")
+elif os == "Linux":
+	type == "linux"
+	distribution = distro.name(pretty=True)
 
-if shell == "/bin/bash":
+if shell in ("/bin/bash", "/usr/bin/bash"):
 	shell = "Bash"
-elif shell == "/bin/zsh":
+elif shell in ("/bin/zsh", "/usr/bin/zsh"):
 	shell = "ZSh"
+
+if term == "kitty":
+	term = "Kitty Terminal"
+elif term == "ghostty":
+	term = "Ghostty Terminal"
+elif term == "Apple_Terminal":
+	term = "macOS Terminal"
 
 if type == "mac":
 	print("Hello, " + Fore.BLUE + user + Style.RESET_ALL + "! " + "You live at " + Fore.BLUE + home + Style.RESET_ALL + " on this " + Fore.RED + os + " " + macver + Style.RESET_ALL + " system.")
 	print("You are using the " + Fore.RED + "Darwin " + kernver + Style.RESET_ALL + " kernel.")
-else:
-	print("Hello, " + Fore.BLUE + user + Style.RESET_ALL + "! " + "You live at " + Fore.BLUE + home + Style.RESET_ALL + " on this " + Fore.RED + os + " " + kernver + Style.RESET_ALL + " system.")
+elif type == "linux":
+	print("Hello, " + Fore.BLUE + user + Style.RESET_ALL + "! " + "You live at " + Fore.BLUE + home + Style.RESET_ALL + " on this " + Fore.RED + distro + Style.RESET_ALL + " system.")
+	print("You are using the " + Fore.RED + "Linux " + kernver + Style.RESET_ALL + " kernel.")
 
 print("Your shell is " + Fore.CYAN + shell + Style.RESET_ALL + ", and your terminal is " + Fore.CYAN + term + Style.RESET_ALL + ".")

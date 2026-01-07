@@ -8,6 +8,7 @@ user = os.environ.get("USER")
 home = os.environ.get("HOME")
 term = os.environ.get("TERM")
 shell = os.environ.get("SHELL")
+termprog = os.environ.get("TERM_PROGRAM")
 os = platform.system()
 kernver = platform.release()
 
@@ -60,6 +61,11 @@ elif term == "xterm":
 elif term == None:
 	print("ERROR: Could not determine term!")
 	term = "Undetermined"
+
+if termprog == None:
+	termprog = "no"
+elif termprog == "Apple_Terminal":
+	term = "macOS Terminal"
 
 if type == "mac":
 	print("Hello, " + Fore.BLUE + user + Style.RESET_ALL + "! " + "You live at " + Fore.BLUE + home + Style.RESET_ALL + " on this " + Fore.RED + os + " " + macver + Style.RESET_ALL + " system.")

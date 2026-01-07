@@ -15,7 +15,7 @@ termprog = os.environ.get("TERM_PROGRAM")
 os = platform.system()
 kernver = platform.release()
 cpu = platform.processor()
-cpu_percent = psutil.cpu_percent(interval=0.5)
+cpu_percent = psutil.cpu_percent(interval=1)
 
 def bytes_to_gb(b):
     return b / (1024 ** 3)
@@ -60,7 +60,7 @@ if os == "Darwin":
 
 if os == "Linux":
     type = "linux"
-    os = distro.name()
+    dis = distro.name()
     cpu = "Unknown CPU"
     try:
         with open("/proc/cpuinfo") as f:
@@ -105,8 +105,16 @@ print()
 if type == "mac":
 	print("Hello, " + Fore.BLUE + user + Style.RESET_ALL + "! " + "You live at " + Fore.BLUE + home + Style.RESET_ALL + " on this " + Fore.RED + os + " " + macver + Style.RESET_ALL + " system.")
 	print("You are using the " + Fore.RED + "Darwin " + kernver + Style.RESET_ALL + " kernel.")
+elif type == "linux":
+        print(
+                f"Hello, {Fore.BLUE}{user}{Style.RESET_ALL}! "
+                f"You live at {Fore.BLUE}{home}{Style.RESET_ALL}, "
+                f"on this {Fore.RED}{dis}{Style.RESET_ALL} system."
+        )
+
+        print(f"You are using the {Fore.RED}{os} {kernver}{Style.RESET_ALL} kernel.")
 else:
-	print("Hello, " + Fore.BLUE + user + Style.RESET_ALL + "! " + "You live at " + Fore.BLUE + home + Style.RESET_ALL + " on this " + Fore.RED + os + " " + kernver + Style.RESET_ALL + " system.")
+        print("Hello, " + Fore.BLUE + user + Style.RESET_ALL + "! " + "You live at " + Fore.BLUE + home + Style.RESET_ALL + " on this " + Fore.RED + os + " " + kernver + Style.RESET_ALL + " system.")
 
 print("Your shell is " + Fore.CYAN + shell + Style.RESET_ALL + ", and your terminal is " + Fore.CYAN + term + Style.RESET_ALL + ".")
 

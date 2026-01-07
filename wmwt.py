@@ -1,6 +1,8 @@
 import os
 import platform
 from colorama import init, Fore, Style
+import psutil
+import subprocess
 
 init(autoreset=True)
 
@@ -11,6 +13,13 @@ shell = os.environ.get("SHELL")
 termprog = os.environ.get("TERM_PROGRAM")
 os = platform.system()
 kernver = platform.release()
+cpu = platform.processor()
+cpu_percent = psutil.cpu_percent(interval=0.5)
+
+def bytes_to_gb(b):
+    return b / (1024 ** 3)
+
+mem = psutil.virtual_memory()
 
 if os == "Darwin":
 	type = "mac"
@@ -43,13 +52,34 @@ if os == "Darwin":
 	parts = macver.split(".")
 	lookup_key = parts[0] if parts[0] != "10" else f"{parts[0]}.{parts[1]}"
 	os = macOSversions.get(lookup_key, "Unknown Mac system")
+	cpu = subprocess.check_output(
+		["sysctl", "-n", "machdep.cpu.brand_string"],
+		text=True
+	).strip()
+
+if os == "Linux":
+	type = "linux"
+	cpu_model = "Unknown CPU"
+	try:
+		with open("/proc/cpuinfo") as f:
+			for line in f:
+				if line.startswith("model name"):
+					cpu_model = line.split(":", 1)[1].strip()
+					break
+	except FileNotFoundError:
+		pass
 
 # handle shell
 if shell in ("/bin/bash", "/usr/bin/bash"):
 	shell = "Bash"
 elif shell in ("/bin/zsh", "/usr/bin/zsh"):
 	shell = "ZSh"
+elif shell in ("/bin/sh", "/usr/bin/sh"):
+	shell = "Bourne Shell"
+elif shell in ("/bin/fish", "/usr/bin/fish", "/usr/local/bin/fish"):
+	shell = "FiSH"
 
+# handle term wowowow
 if term == "xterm-kitty":
 	term = "Kitty Terminal"
 elif term == "xterm-ghostty":
@@ -62,10 +92,13 @@ elif term == None:
 	print("ERROR: Could not determine term!")
 	term = "Undetermined"
 
+# handle macOS terminal fuckery
 if termprog == None:
 	termprog = "no"
 elif termprog == "Apple_Terminal":
 	term = "macOS Terminal"
+
+print()
 
 if type == "mac":
 	print("Hello, " + Fore.BLUE + user + Style.RESET_ALL + "! " + "You live at " + Fore.BLUE + home + Style.RESET_ALL + " on this " + Fore.RED + os + " " + macver + Style.RESET_ALL + " system.")
@@ -74,3 +107,23 @@ else:
 	print("Hello, " + Fore.BLUE + user + Style.RESET_ALL + "! " + "You live at " + Fore.BLUE + home + Style.RESET_ALL + " on this " + Fore.RED + os + " " + kernver + Style.RESET_ALL + " system.")
 
 print("Your shell is " + Fore.CYAN + shell + Style.RESET_ALL + ", and your terminal is " + Fore.CYAN + term + Style.RESET_ALL + ".")
+
+# system ifnormatiun
+print()
+
+print(
+	f"Your CPU is "
+	f"{Fore.GREEN}{cpu}{Style.RESET_ALL}, and around "
+	f"{Fore.GREEN}{cpu_percent}%{Style.RESET_ALL} of its power is currently in use."
+)
+
+# memememory
+print(
+	f"You are currently using "
+	f"{Fore.GREEN}{bytes_to_gb(mem.used):.2f} GB{Style.RESET_ALL} "
+	f"out of "
+	f"{Fore.GREEN}{bytes_to_gb(mem.total):.2f} GB{Style.RESET_ALL} "
+	f"of memory. ({Fore.GREEN}{mem.percent}%{Style.RESET_ALL})"
+)
+
+print()

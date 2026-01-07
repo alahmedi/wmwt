@@ -3,6 +3,7 @@ import platform
 from colorama import init, Fore, Style
 import psutil
 import subprocess
+import distro
 
 init(autoreset=True)
 
@@ -58,16 +59,17 @@ if os == "Darwin":
 	).strip()
 
 if os == "Linux":
-	type = "linux"
-	cpu_model = "Unknown CPU"
-	try:
-		with open("/proc/cpuinfo") as f:
-			for line in f:
-				if line.startswith("model name"):
-					cpu_model = line.split(":", 1)[1].strip()
-					break
-	except FileNotFoundError:
-		pass
+    type = "linux"
+    os = distro.name()
+    cpu = "Unknown CPU"
+    try:
+        with open("/proc/cpuinfo") as f:
+            for line in f:
+                if line.startswith("model name"):
+                    cpu = line.split(":", 1)[1].strip()
+                    break
+    except FileNotFoundError:
+        pass
 
 # handle shell
 if shell in ("/bin/bash", "/usr/bin/bash"):

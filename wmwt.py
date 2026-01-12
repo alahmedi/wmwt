@@ -61,7 +61,7 @@ if os == "Darwin":
 if os == "Linux":
     type = "linux"
     dis = distro.name()
-    cpu = "Unknown CPU"
+    cpu = "Unknown"
     try:
         with open("/proc/cpuinfo") as f:
             for line in f:
@@ -80,6 +80,8 @@ elif shell in ("/bin/sh", "/usr/bin/sh"):
 	shell = "Bourne Shell"
 elif shell in ("/bin/fish", "/usr/bin/fish", "/usr/local/bin/fish"):
 	shell = "FiSH"
+elif shell == None:
+	shell = "Unknown"
 
 # handle term wowowow
 if term == "xterm-kitty":
@@ -92,14 +94,17 @@ elif term == "xterm":
 	term = "XTerm"
 elif term == None:
 	print("ERROR: Could not determine term!")
-	term = "Undetermined"
+	term = "Unknown"
 
 # handle macOS terminal fuckery
 if termprog == None:
 	termprog = "no"
 elif termprog == "Apple_Terminal":
 	term = "macOS Terminal"
+elif termprog == None:
+	term = "Unknown"
 
+# actual part
 print()
 
 if type == "mac":
